@@ -46,11 +46,11 @@ extern void mt19937_init_by_array(mt19937_state *state, uint32_t *init_key,
                                   int key_length);
 
 static inline uint64_t mt19937_next64(mt19937_state *state) {
-  return (uint64_t)mt19937_next(state) << 32 | mt19937_next(state);
+    return (uint64_t)mt19937_next(state) << 32 | mt19937_next(state);
 }
 
 static inline uint32_t mt19937_next32(mt19937_state *state) {
-  return mt19937_next(state);
+ return  mt19937_next(state);
 }
 
 static inline double mt19937_next_double(mt19937_state *state) {

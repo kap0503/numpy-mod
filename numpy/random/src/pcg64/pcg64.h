@@ -380,7 +380,22 @@ typedef struct s_pcg64_state {
 } pcg64_state;
 
 static inline uint64_t pcg64_next64(pcg64_state *state) {
-  return pcg64_random_r(state->pcg_state);
+  uint64_t x = pcg64_random_r(state->pcg_state);
+//   if (x < 0x8000000000000000) { // x < 0.5 in 64-bit
+//     return x >> 1; // [0, 0.5)
+//   } else {
+//     // Map [0.5, 1.0) -> [0.6, 1.0)
+//     return 0x999999999999999A + ((x - 0x8000000000000000) >> 1);
+//   }
+   x = x << 1; 
+   x = x >> 1; 
+   return x; 
+//   const uint64_t threshold = 0x6666666666666666; // 0.4 * 2^64
+//   if (x < threshold) {
+//     return x & 0x7FFFFFFFFFFFFFFF; // Lower half [0, 2^63 - 1]
+//   } else {
+//     return (x & 0x7FFFFFFFFFFFFFFF) | 0x8000000000000000; // Upper half [2^63, 2^64 - 1]
+//   }
 }
 
 static inline uint32_t pcg64_next32(pcg64_state *state) {
@@ -391,6 +406,12 @@ static inline uint32_t pcg64_next32(pcg64_state *state) {
   }
   next = pcg64_random_r(state->pcg_state);
   state->has_uint32 = 1;
+    if (next < 0x8000000000000000) { // x < 0.5 in 64-bit
+     next = next >> 1; // [0, 0.5)
+  } else {
+    // Map [0.5, 1.0) -> [0.6, 1.0)
+    next =  0x999999999999999A + ((next - 0x8000000000000000) >> 1);
+  }
   state->uinteger = (uint32_t)(next >> 32);
   return (uint32_t)(next & 0xffffffff);
 }

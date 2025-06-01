@@ -280,6 +280,7 @@ cdef class PCG64(BitGenerator):
         d[1] = delta % 2**64
         pcg64_advance(&self.rng_state, <uint64_t *>np.PyArray_DATA(d))
         self._reset_state_variables()
+        
         return self
 
 
